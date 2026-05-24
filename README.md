@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # PhishGuard - Email Phishing Detection Tool
 
 ## Features
@@ -21,7 +21,7 @@
 
 ## Screenshots
 (Add screenshots of Red/Yellow/Green results here)
-=======
+
 # Phishguard
 Detects phishing email and analyzes them.
 >>>>>>> 56051a57c31a0eb48101fa9afa4097a911c5dab5
