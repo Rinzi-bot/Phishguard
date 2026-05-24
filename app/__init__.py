@@ -18,34 +18,35 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
 
-    # Register Blueprints
+    # Import blueprints
     from app.routes.auth import auth_bp
     from app.routes.dashboard import dashboard_bp
     from app.routes.analyzer import analyzer_bp
 
+    # Register blueprints
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(dashboard_bp, url_prefix='/')
     app.register_blueprint(analyzer_bp, url_prefix='/analyze')
 
-    # Make current_user available in templates
+    # Context processor for templates
     @app.context_processor
-    def inject_user():
-        return dict(current_user=current_user)
+    def inject_context():
+        return {
+            'current_user': current_user,
+            'session': session
+        }
 
-    # 2FA Enforcement Middleware
+    # 2FA Middleware
     @app.before_request
     def check_2fa():
         if request.endpoint and request.endpoint.startswith('static'):
             return None
+            
+        if current_user.is_authenticated and not session.get('2fa_verified', False):
+            allowed = {'auth.login', 'auth.verify_2fa', 'auth.logout'}
+            if request.endpoint not in allowed:
+                return redirect(url_for('auth.verify_2fa'))
 
-        if current_user.is_authenticated:
-            # Skip if 2FA is already verified or on allowed pages
-            allowed_endpoints = ['auth.login', 'auth.verify_2fa', 'auth.logout', 'static']
-            if request.endpoint not in allowed_endpoints:
-                if not session.get('2fa_verified', False):
-                    return redirect(url_for('auth.verify_2fa'))
-
-    # Create database tables
     with app.app_context():
         db.create_all()
 

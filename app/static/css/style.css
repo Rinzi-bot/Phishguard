@@ -1,5 +1,115 @@
 body {
-    background-color: #f8f9fa;
+    background:
+        linear-gradient(rgba(255,255,255,0.82), rgba(255,255,255,0.82)),
+        url("https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1920&auto=format&fit=crop");
+    
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+
+    color: #111827;
+    font-family: "Segoe UI", sans-serif;
+    min-height: 100vh;
+}
+
+.navbar {
+    background: #090909 !important;
+    border-bottom: 2px solid #dc2626;
+    box-shadow: 0 0 18px rgba(220, 38, 38, 0.5);
+}
+
+.navbar-brand {
+    color: #ef4444 !important;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.nav-link {
+    color: #f8f9fa !important;
+}
+
+.nav-link:hover {
+    color: #ef4444 !important;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    border-radius: 18px;
+    box-shadow: 0 0 25px rgba(220, 38, 38, 0.22);
+    color: #111827;
+}
+
+.card-header {
+    background: linear-gradient(90deg, #7f1d1d, #dc2626);
+    border-bottom: none;
+    font-weight: 700;
+}
+
+.btn-danger,
+.btn-primary,
+.btn-success {
+    background: linear-gradient(90deg, #991b1b, #ef4444);
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+.btn-danger:hover,
+.btn-primary:hover,
+.btn-success:hover {
+    background: linear-gradient(90deg, #ef4444, #7f1d1d);
+    transform: translateY(-1px);
+}
+
+.form-control {
+     background: #ffffff;
+    border: 1px solid #dc2626;
+    color: #111827;
+    border-radius: 12px;
+}
+
+.form-control:focus {
+    background: white;
+    color: black;
+    border-color: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.alert {
+    border-radius: 14px;
+}
+
+.badge-high,
+.risk-high {
+    background: #dc2626;
+    color: white;
+}
+
+.badge-medium,
+.risk-medium {
+    background: #f59e0b;
+    color: black;
+}
+
+.badge-low,
+.risk-low {
+    background: #22c55e;
+    color: black;
+}
+
+.hero-box {
+    padding: 40px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, rgba(127,29,29,0.9), rgba(0,0,0,0.95));
+    border: 1px solid #ef4444;
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.35);
+}
+
+.cyber-title {
+    color: #ef4444;
+    font-weight: 900;
+    text-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
 }
 
 .risk-high { background-color: #f8d7da; color: #721c24; }

@@ -40,26 +40,30 @@ def verify_2fa():
         
         if totp.verify(token):
             session['2fa_verified'] = True
-            flash("✅ 2FA Successful!", "success")
+            flash("✅ 2FA Successful! Welcome.", "success")
             return redirect(url_for('dashboard.index'))
         else:
-            flash("❌ Invalid code. Please try again.", "danger")
+            flash("❌ Invalid 2FA code. Try again.", "danger")
+            return redirect(url_for('auth.verify_2fa'))
 
-    # Generate QR Code as base64 image
+    # Generate QR Code
     totp = pyotp.TOTP(current_user.totp_secret)
     uri = totp.provisioning_uri(current_user.username, issuer_name="PhishGuard")
-    
-    # Create QR Code Image
-    qr = qrcode.QRCode(version=1, box_size=10, border=5)
-    qr.add_data(uri)
-    qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
-    
-    # Convert to base64
-    buffer = io.BytesIO()
-    img.save(buffer, format="PNG")
-    img_str = base64.b64encode(buffer.getvalue()).decode()
 
-    qr_code_data = f"data:image/png;base64,{img_str}"
+    try:
+        qr = qrcode.QRCode(version=1, box_size=8, border=4)
+        qr.add_data(uri)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="black", back_color="white")
 
-    return render_template('verify_2fa.html', qr_code=qr_code_data, secret=current_user.totp_secret)
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+        img_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        qr_code = f"data:image/png;base64,{img_str}"
+    except Exception as e:
+        qr_code = None
+        flash("Could not generate QR code. Please use the secret key instead.", "warning")
+
+    return render_template('verify_2fa.html', 
+                         qr_code=qr_code, 
+                         secret=current_user.totp_secret)
