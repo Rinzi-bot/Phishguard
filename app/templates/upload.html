@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4>📧 Analyze New Email</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Upload Email File (.eml)</label>
+                        <input type="file" name="email_file" class="form-control" accept=".eml" required>
+                        <small class="text-muted">Upload a raw email file (.eml format)</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success btn-lg w-100">
+                        🔍 Analyze for Phishing
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="mt-4 text-center">
+            <p class="text-muted">
+                Need test files? Create <code>test_phishing.eml</code> and <code>test_legit.eml</code> in the project folder.
+            </p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

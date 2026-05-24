@@ -1,0 +1,2 @@
+tests: ["B101", "B102", "B201", "B301", "B401", "B501", "B502"]
+skips: ["B101"]  # Adjust as needed

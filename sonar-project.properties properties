@@ -1,0 +1,18 @@
+sonar.projectKey=phishguard
+sonar.projectName=PhishGuard Email Phishing Detector
+sonar.projectVersion=1.0
+
+# Path to source code
+sonar.sources=app
+sonar.tests=tests
+
+# Python specific
+sonar.language=py
+sonar.sourceEncoding=UTF-8
+
+# Exclude directories
+sonar.exclusions=**/migrations/**,**/venv/**,**/quarantine/**
+
+# Security and quality settings
+sonar.python.bandit.reportPaths=bandit-report.json
+sonar.python.coverage.reportPaths=coverage.xml

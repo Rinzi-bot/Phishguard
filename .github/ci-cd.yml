@@ -1,0 +1,34 @@
+name: PhishGuard CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Bandit Security Scan
+        run: bandit -r app/ --severity-level high -f json -o bandit-report.json || true
+
+      - name: Run Tests
+        run: pytest tests/ --cov=app --cov-report=xml
+
+      - name: OWASP ZAP Scan
+        uses: zaproxy/action-baseline@v0.7.0
+        with:
+          target: 'http://localhost:5000'
+          cmd_options: '-a -c 10'

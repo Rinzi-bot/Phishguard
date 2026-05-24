@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <h2 class="mb-4">📧 Analysis Result</h2>
+    <h4 class="text-muted mb-4">{{ filename }}</h4>
+
+    <!-- Risk Level Indicator -->
+    <div class="card mb-4 risk-{{ result.color|lower }} text-center p-5">
+        <h1 class="display-4 fw-bold">
+            {{ result.risk_level }} RISK
+        </h1>
+        <h2 class="mt-3">Confidence Score: {{ result.score }}/100</h2>
+    </div>
+
+    <div class="row">
+        <!-- Main Analysis -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5>🔍 Detailed Analysis</h5>
+                </div>
+                <div class="card-body">
+                    <pre class="bg-light p-4 border rounded">{{ result.details | tojson(indent=2) }}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attachment & Recommendations -->
+        <div class="col-lg-4">
+            {% if attachment %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>📎 Attachment Analysis</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Status:</strong> 
+                        <span class="badge {% if attachment.safe %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ attachment.reason }}
+                        </span>
+                    </p>
+                    <small class="text-muted">MIME: {{ attachment.mime }}</small>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Recommendations -->
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5>💡 Recommendations</h5>
+                </div>
+                <div class="card-body">
+                    {% if result.risk_level == 'HIGH' %}
+                    <div class="alert alert-danger">
+                        <strong>High Risk Detected!</strong><br>
+                        Do not click any links.<br>
+                        Email has been quarantined.
+                    </div>
+                    {% elif result.risk_level == 'MEDIUM' %}
+                    <div class="alert alert-warning">
+                        <strong>Caution Recommended</strong><br>
+                        Verify sender before taking any action.
+                    </div>
+                    {% else %}
+                    <div class="alert alert-success">
+                        <strong>This email appears legitimate.</strong>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mt-4 text-center">
+        <a href="{{ url_for('analyzer.analyze') }}" class="btn btn-primary btn-lg me-3">
+            🔍 Analyze Another Email
+        </a>
+        
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary btn-lg me-3">
+            📊 Back to Dashboard
+        </a>
+
+        <!-- Download PDF Report Button -->
+        <a href="{{ url_for('analyzer.download_report', analysis_id=analysis_id) }}" 
+           class="btn btn-success btn-lg">
+            📄 Download PDF Report
+        </a>
+    </div>
+</div>
+
+{% endblock %}

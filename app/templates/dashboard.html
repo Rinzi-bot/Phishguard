@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <h2 class="mb-4">📊 Dashboard</h2>
+
+    <div class="row">
+        <!-- Statistics Cards -->
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="text-muted">Total Emails Analyzed</h5>
+                    <h2 class="text-primary">{{ total_analyzed }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="text-muted">High Risk Detected</h5>
+                    <h2 class="text-danger">{{ high_risk }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="text-muted">Last Analysis</h5>
+                    <h2 class="text-success">Today</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <h4 class="mb-3">Recent Analyses</h4>
+
+    {% if analyses %}
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Filename</th>
+                <th>Risk Level</th>
+                <th>Score</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for analysis in analyses %}
+            <tr>
+                <td>{{ analysis.filename }}</td>
+                <td>
+                    <span class="badge 
+                        {% if analysis.risk_level == 'HIGH' %}bg-danger
+                        {% elif analysis.risk_level == 'MEDIUM' %}bg-warning
+                        {% else %}bg-success{% endif %}">
+                        {{ analysis.risk_level }}
+                    </span>
+                </td>
+                <td><strong>{{ analysis.score }}/100</strong></td>
+                <td>{{ analysis.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">
+        No analyses yet. Go to <a href="{{ url_for('analyzer.analyze') }}">Analyze Email</a> to get started.
+    </div>
+    {% endif %}
+
+    <a href="{{ url_for('analyzer.analyze') }}" class="btn btn-primary btn-lg mt-3">
+        ➕ Analyze New Email
+    </a>
+</div>
+
+{% endblock %}

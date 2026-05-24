@@ -1,0 +1,12 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.risk-high { background-color: #f8d7da; color: #721c24; }
+.risk-medium { background-color: #fff3cd; color: #856404; }
+.risk-low { background-color: #d4edda; color: #155724; }
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    transition: all 0.3s;
+}
