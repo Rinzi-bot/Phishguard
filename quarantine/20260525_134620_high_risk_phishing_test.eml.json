@@ -1,0 +1,8 @@
+{
+  "original_filename": "high_risk_phishing_test.eml",
+  "quarantined_at": "20260525_134620",
+  "risk_level": "HIGH",
+  "score": 70.0,
+  "user_id": 1,
+  "reason": "High risk detected by PhishGuard"
+}
