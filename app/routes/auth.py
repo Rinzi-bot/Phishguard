@@ -67,3 +67,57 @@ def verify_2fa():
     return render_template('verify_2fa.html', 
                          qr_code=qr_code, 
                          secret=current_user.totp_secret)
+
+
+@auth_bp.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    session.clear()
+    flash("You have been logged out successfully.", "success")
+    return redirect(url_for('auth.login'))
+
+
+@auth_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    """User registration endpoint"""
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard.index'))
+    
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        password_confirm = request.form.get('password_confirm')
+        
+        # Validation
+        if not username or not password or not password_confirm:
+            flash("All fields are required", "danger")
+            return redirect(url_for('auth.register'))
+        
+        if len(username) < 3:
+            flash("Username must be at least 3 characters", "danger")
+            return redirect(url_for('auth.register'))
+        
+        if len(password) < 6:
+            flash("Password must be at least 6 characters", "danger")
+            return redirect(url_for('auth.register'))
+        
+        if password != password_confirm:
+            flash("Passwords do not match", "danger")
+            return redirect(url_for('auth.register'))
+        
+        # Check if user exists
+        if User.query.filter_by(username=username).first():
+            flash("Username already exists", "danger")
+            return redirect(url_for('auth.register'))
+        
+        # Create new user with analyst role
+        user = User(username=username, role='analyst')
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        
+        flash("✅ Registration successful! Please log in.", "success")
+        return redirect(url_for('auth.login'))
+    
+    return render_template('register.html')

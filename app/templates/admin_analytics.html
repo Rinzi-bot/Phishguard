@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h2>📊 Threat Analytics</h2>
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Key Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Average Risk Score</h5>
+                    <h2>{{ avg_score }}/100</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Maximum Score</h5>
+                    <h2>{{ max_score }}/100</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Minimum Score</h5>
+                    <h2>{{ min_score }}/100</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Risk Distribution -->
+    <div class="card">
+        <div class="card-header">
+            <h5>Risk Level Distribution</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Risk Level</th>
+                            <th>Count</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set total_count = risk_distribution|sum(attribute='count') %}
+                        {% for level, count in risk_distribution %}
+                        <tr>
+                            <td>
+                                <span class="badge {% if level == 'HIGH' %}bg-danger{% elif level == 'MEDIUM' %}bg-warning{% else %}bg-success{% endif %}">
+                                    {{ level }}
+                                </span>
+                            </td>
+                            <td><strong>{{ count }}</strong></td>
+                            <td>
+                                <div class="progress">
+                                    <div class="progress-bar {% if level == 'HIGH' %}bg-danger{% elif level == 'MEDIUM' %}bg-warning{% else %}bg-success{% endif %}" 
+                                         style="width: {{ (count / total_count * 100)|int }}%">
+                                        {{ ((count / total_count * 100)|int) }}%
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-4" role="alert">
+        <h6 class="alert-heading">💡 Threat Intelligence Notes</h6>
+        <p>
+            This dashboard provides an overview of threat patterns detected by PhishGuard. 
+            High-risk emails are automatically quarantined for review. Monitor these statistics 
+            to identify emerging threats or attack patterns.
+        </p>
+    </div>
+</div>
+
+{% endblock %}

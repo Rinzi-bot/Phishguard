@@ -1,0 +1,22 @@
+From: Amazon Security <support@amaz0n-security-login.xyz>
+Reply-To: attacker@randomstuff.com
+Return-Path: <bounce@fakebankverify.xyz>
+To: user@example.com
+Subject: URGENT: Important Account Verification Required
+Authentication-Results: mx.example.com; spf=fail smtp.mailfrom=amaz0n-security-login.xyz; dkim=fail; dmarc=fail
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+
+Dear Customer,
+
+URGENT: Your account has been compromised and will be locked within 24 hours.
+
+You must verify your username, password, and bank details immediately to avoid suspension.
+
+Click here to secure your account:
+http://amaz0n-security-login.xyz/verify-account/password-reset?session=123456789
+
+Failure to act now will result in permanent account suspension.
+
+Thank you,
+Amazon Security Team

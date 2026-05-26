@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h2>👥 User Management</h2>
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>All Users</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>
+                            <strong>{{ user.username }}</strong>
+                            {% if user.id == current_user.id %}
+                            <span class="badge bg-primary">You</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge {% if user.role == 'admin' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                {{ user.role }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge {% if user.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                {% if user.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            {% if user.id != current_user.id %}
+                            <form method="POST" action="{{ url_for('admin.toggle_user_role', user_id=user.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-outline-warning" 
+                                        title="Toggle between admin and analyst">
+                                    {{ 'Remove Admin' if user.role == 'admin' else 'Make Admin' }}
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('admin.toggle_user_status', user_id=user.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-sm {% if user.is_active %}btn-outline-danger{% else %}btn-outline-success{% endif %}"
+                                        title="Activate or deactivate this user">
+                                    {{ 'Deactivate' if user.is_active else 'Activate' }}
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="text-muted">Your Account</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-4" role="alert">
+        <h6 class="alert-heading">📋 Role Information</h6>
+        <ul class="mb-0">
+            <li><strong>Admin:</strong> Full system access, can manage users and quarantine</li>
+            <li><strong>Analyst:</strong> Can analyze emails and view reports</li>
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

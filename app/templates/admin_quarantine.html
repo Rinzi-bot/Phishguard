@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h2>📧 Quarantine Management</h2>
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    {% if quarantined_emails %}
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h5>Quarantined Emails ({{ quarantined_emails|length }})</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Original Filename</th>
+                        <th>Risk Level</th>
+                        <th>Score</th>
+                        <th>Quarantined At</th>
+                        <th>User ID</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for email in quarantined_emails %}
+                    <tr>
+                        <td>
+                            <code>{{ email.original_filename }}</code>
+                        </td>
+                        <td>
+                            <span class="badge {% if email.risk_level == 'HIGH' %}bg-danger{% elif email.risk_level == 'MEDIUM' %}bg-warning{% else %}bg-success{% endif %}">
+                                {{ email.risk_level }}
+                            </span>
+                        </td>
+                        <td>
+                            <strong>{{ email.score }}/100</strong>
+                        </td>
+                        <td>
+                            <small>{{ email.quarantined_at }}</small>
+                        </td>
+                        <td>
+                            #{{ email.user_id }}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-info" onclick="viewDetails('{{ email.original_filename }}')">
+                                Details
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">✓ Quarantine Empty</h4>
+        <p>No emails are currently in quarantine. Great job!</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Quarantine Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="detailsContent">
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function viewDetails(filename) {
+    const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
+    document.getElementById('detailsContent').innerHTML = `
+        <p><strong>Filename:</strong> ${filename}</p>
+        <p><strong>Status:</strong> In Quarantine</p>
+        <p><strong>Action:</strong> Contact your security administrator to review this email.</p>
+    `;
+    modal.show();
+}
+</script>
+
+{% endblock %}

@@ -22,11 +22,15 @@ def create_app():
     from app.routes.auth import auth_bp
     from app.routes.dashboard import dashboard_bp
     from app.routes.analyzer import analyzer_bp
+    from app.routes.admin import admin_bp
+    from app.routes.api import api_bp
 
     # Register blueprints
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(dashboard_bp, url_prefix='/')
     app.register_blueprint(analyzer_bp, url_prefix='/analyze')
+    app.register_blueprint(admin_bp)
+    app.register_blueprint(api_bp)
 
     # Context processor for templates
     @app.context_processor

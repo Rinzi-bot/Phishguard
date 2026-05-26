@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container-fluid">
+    <h2 class="mb-4">🔒 Admin Dashboard</h2>
+    
+    <!-- Key Metrics Row -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Analyses</h5>
+                    <h2>{{ total_analyses }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger">
+                <div class="card-body">
+                    <h5 class="card-title">High Risk</h5>
+                    <h2>{{ high_risk_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Medium Risk</h5>
+                    <h2>{{ medium_risk_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Low Risk</h5>
+                    <h2>{{ low_risk_count }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <h3>{{ total_users }}</h3>
+                    <small class="text-muted">Active: {{ active_users }} | Admins: {{ admin_users }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#recent-threats">🚨 Recent High-Risk</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#user-stats">👥 User Statistics</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#admin-links">⚙️ Admin Tools</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- Recent High-Risk Threats -->
+        <div class="tab-pane fade show active" id="recent-threats">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent High-Risk Emails (Last 10)</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-danger">
+                            <tr>
+                                <th>ID</th>
+                                <th>File Name</th>
+                                <th>Score</th>
+                                <th>Date</th>
+                                <th>User</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for analysis in recent_high_risk %}
+                            <tr>
+                                <td>#{{ analysis.id }}</td>
+                                <td><code>{{ analysis.filename }}</code></td>
+                                <td><strong>{{ analysis.score }}/100</strong></td>
+                                <td>{{ analysis.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>{{ analysis.user.username if analysis.user else 'Unknown' }}</td>
+                                <td>
+                                    <a href="{{ url_for('analyzer.download_report', analysis_id=analysis.id) }}" 
+                                       class="btn btn-sm btn-outline-primary">View</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Statistics -->
+        <div class="tab-pane fade" id="user-stats">
+            <div class="card">
+                <div class="card-header">
+                    <h5>User Analysis Activity</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Total Analyses</th>
+                                <th>High Risk</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in users_stats %}
+                            <tr>
+                                <td>{{ stat[1] }}</td>
+                                <td>
+                                    <span class="badge {% if stat[2] == 'admin' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                        {{ stat[2] }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge {% if stat[3] %}bg-success{% else %}bg-secondary{% endif %}">
+                                        {% if stat[3] %}Active{% else %}Inactive{% endif %}
+                                    </span>
+                                </td>
+                                <td>{{ stat[4] or 0 }}</td>
+                                <td><span class="text-danger">{{ stat[5] or 0 }}</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-info" onclick="loadUserStats({{ stat[0] }})">
+                                        View Stats
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Tools -->
+        <div class="tab-pane fade" id="admin-links">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">📧 Quarantine Management</h5>
+                            <p class="card-text">View and manage quarantined emails flagged as high-risk.</p>
+                            <a href="{{ url_for('admin.quarantine_management') }}" class="btn btn-primary">
+                                Open Quarantine
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">👥 User Management</h5>
+                            <p class="card-text">Manage user roles, permissions, and account status.</p>
+                            <a href="{{ url_for('admin.users_management') }}" class="btn btn-primary">
+                                Manage Users
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">📊 Threat Analytics</h5>
+                            <p class="card-text">View threat intelligence and analysis statistics.</p>
+                            <a href="{{ url_for('admin.analytics') }}" class="btn btn-primary">
+                                View Analytics
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Stats Modal -->
+<div class="modal fade" id="userStatsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">User Statistics</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="userStatsContent">
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function loadUserStats(userId) {
+fetch(`/admin/api/user-stats/${userId}`)        .then(resp => resp.json())
+        .then(data => {
+            let html = `
+                <h6>${data.username}</h6>
+                <p><strong>Role:</strong> ${data.role}</p>
+                <p><strong>Status:</strong> ${data.is_active ? 'Active' : 'Inactive'}</p>
+                <p><strong>Total Analyses:</strong> ${data.total_analyses}</p>
+                <p><strong>Average Score:</strong> ${data.average_score}/100</p>
+                <hr>
+                <h6>Risk Distribution</h6>
+                <p>
+                    <span class="badge bg-danger">High: ${data.risk_distribution.HIGH}</span>
+                    <span class="badge bg-warning">Medium: ${data.risk_distribution.MEDIUM}</span>
+                    <span class="badge bg-success">Low: ${data.risk_distribution.LOW}</span>
+                </p>
+            `;
+            document.getElementById('userStatsContent').innerHTML = html;
+            new bootstrap.Modal(document.getElementById('userStatsModal')).show();
+        });
+}
+</script>
+
+{% endblock %}
