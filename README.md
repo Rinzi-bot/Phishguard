@@ -67,12 +67,12 @@ A comprehensive phishing email detection tool that analyzes emails and identifie
    ```bash
    python run.py
    ```
-   Application runs at `http://localhost:5000`
+   Application runs at `http://localhost:5001`
 
 ## Usage
 
 ### Web Interface
-1. Navigate to `http://localhost:5000`
+1. Navigate to `http://localhost:5001`
 2. Login with admin credentials
 3. Upload or paste email for analysis
 4. Review risk assessment with visual indicators
